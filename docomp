@@ -1,0 +1,22 @@
+#!/bin/bash
+
+CC390=$1
+shift
+C390FLAGS=$1
+shift
+archs=$*
+set -x
+
+rm -f docomp.fail docomp.done
+for i in $archs
+do
+	${CC390} ${C390FLAGS} e2t_sample.c -march=${i} -c -o e2t_sample_s390_${i}.o || touch docomp.fail &
+	${CC390} ${C390FLAGS} e2t_sample.c -march=${i} -o e2t_sample_s390_${i} || touch docomp.fail &
+done
+wait
+if [ ! -f docomp.fail ]
+then
+	touch docomp.done
+else
+	exit 1
+fi
