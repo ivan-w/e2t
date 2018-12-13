@@ -128,10 +128,11 @@ void	e2t_asm_process_symbols(e2t *e,GElf_Shdr *gsh,Elf_Data *ed)
 						}
 						
 					}
-					printf("%-8.8s EQU   %s+%d\n",
+					printf("%-8.8s EQU   %s+%d * %s - %s\n",
 						nsn,
 						ntsn,
-						gsym.st_value);
+						gsym.st_value,
+                        sn,tsn);
 					break;
 			}
 		}
