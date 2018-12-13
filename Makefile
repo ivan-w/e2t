@@ -6,7 +6,7 @@ ARCHS= \
 
 C390FLAGS=-O3 -m31 -fPIC -fPIE -fno-asynchronous-unwind-tables -fomit-frame-pointer
 # C390FLAGS=-O3 -m31
-CFLAGS=-g
+CFLAGS=-O3
 
 OBJS= \
 	e2t_main.o  \
