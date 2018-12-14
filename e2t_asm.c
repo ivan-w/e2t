@@ -111,14 +111,17 @@ void	e2t_asm_process_symbols(e2t *e,GElf_Shdr *gsh,Elf_Data *ed)
 				case STT_OBJECT:
 					if(stb==STB_GLOBAL)
 					{
-						if(svis!=STV_HIDDEN || e->exposehidden)
-						{
-							printf("         ENTRY %s * %s\n",nsn,sn);
-						}
-						else
-						{
-							printf("* HIDDEN ENTRY %s * %s\n",nsn,sn);
-						}
+                        if(!e->noentry)
+                        {
+                                if(svis!=STV_HIDDEN || e->exposehidden)
+                                {
+                                    printf("         ENTRY %s * %s\n",nsn,sn);
+                                }
+                                else
+                                {
+                                    printf("* HIDDEN ENTRY %s * %s\n",nsn,sn);
+                                }
+                        }
 						if(e->genmap)
 						{
 							printf("$$NM%4.4X DC    A(%s)\n",smap_count,nsn);

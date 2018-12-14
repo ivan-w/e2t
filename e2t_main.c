@@ -7,14 +7,19 @@
 
 static	inline	void	e2t_usage(char *progname)
 {
-	fprintf(stderr,"Usage : %s [-vX] filename\n",progname);
+	fprintf(stderr,"Usage : %s [-vXCMN] filename\n",progname);
+    fprintf(stderr,"\t-v : Show version\n");
+    fprintf(stderr,"\t-X : Expose hidden symbols\n");
+    fprintf(stderr,"\t-M : Generate a symbol map\n");
+    fprintf(stderr,"\t-C : Treat COM as DS\n");
+    fprintf(stderr,"\t-N : Do not generate ENTRY records\n");
 	return;
 }
 
 static	inline	int	e2t_options(e2t *e,int ac,char **av)
 {
 	int	oc;
-	while((oc=getopt(ac,av,"vXCM"))!=-1)
+	while((oc=getopt(ac,av,"?vXCMN"))!=-1)
 	{
 		switch(oc)
 		{
@@ -30,6 +35,9 @@ static	inline	int	e2t_options(e2t *e,int ac,char **av)
 				break;
 			case 'C':
 				e->comasds=1;
+				break;
+			case 'N':
+				e->noentry=1;
 				break;
 			case '?':
 				return 1;

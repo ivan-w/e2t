@@ -28,6 +28,7 @@ typedef struct __e2t
 	e2t_list	sect_relas;	/* rela in section list */
 	int		exposehidden : 1,
 			comasds : 1,
+			noentry : 1,
 			genmap : 1;
 } e2t;
 
