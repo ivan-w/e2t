@@ -146,7 +146,10 @@ void	e2t_asm_process_symbols(e2t *e,GElf_Shdr *gsh,Elf_Data *ed)
 				{
 					if(e->comasds)
 					{
-							printf("         ENTRY %s * %s\n",nsn,sn);
+                            if(!e->noentry)
+                            {
+							    printf("         ENTRY %s * %s\n",nsn,sn);
+                            }
 							printf("         DS    0D\n");
 							printf("%-8.8s DS    %dC\n",nsn,gsym.st_size);
 					}
