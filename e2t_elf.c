@@ -287,7 +287,17 @@ char	*e2t_elf_symbol_name(e2t *e,int six)
 			sym.st_name,
 			elf_strptr(e->ielf,e->symthdr->sh_link,sym.st_name));
 	*/
-	return(elf_strptr(e->ielf,e->symthdr->sh_link,sym.st_name));
+    if(GELF_ST_BIND(sym.st_info)==STB_GLOBAL)
+    {
+	    return(elf_strptr(e->ielf,e->symthdr->sh_link,sym.st_name));
+    }
+    else
+    {
+        char    *sn;
+        sn=malloc(16);
+        sprintf(sn,"__%8.8X",six);
+        return(sn);
+    }
 }
 
 char	*e2t_elf_symbol_name_suffixed(e2t *e,int six,char *suf)
