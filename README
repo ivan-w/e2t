@@ -24,6 +24,7 @@ Caveats
     IFOX has a hard limit on the number of ESDs. So large pre-linked programs may not assemble.
     if the relocatable ELF file contains no symbol, the output cannot be used by IFOX
     There is no C Library (but one can create one with the utility).
+    PLT processing requires that the Long Displacement facility be enabled
 
 Usage
     e2t [-vXCMN] filename
@@ -31,7 +32,56 @@ Usage
         -X Expose hidden symbols
             When converting libraries to a set of IFOX/TEXT files, some libraries contain hidden symbols but that are useful for linking (for example gcclib). This flags ignores the "hidden" indicater in the ELF files and creates an ENTRY nonetheless
         -C Treat common as DS
-            As explained in the caveats section, Common Section can be seen as COM IFOX statements. However, these are not seen as external. Specifying this flag generates a DS and an ENTRY statement instead of a COM statement
+            As explained in the caveats section, Common Section can be seen as COM IFOX statements. However, these are not seen as external. Specifying this flag generates a DS and an ENTRY statement instead of a COM statement which may lead to duplicate entries in turn.
         -M Generate an inlined symbol map (experimental)
         -N Do not generate ENTRY statements. This is needed for pre-linked relocatable objects which are large enough to exceed the hard limit of IFOX regarding the number of ESD entries. It is then required to add the necessary ENTRY cards so that linking can be performed. (FOR Example adding an " ENTRY MAIN" line in the output deck)
 
+Example
+    Consider the following source C file :
+****************
+extern  char    bar(char);
+int foo(char *c,int sz)
+{
+    int i;
+    char s;
+    for(i=0,s=0;i<sz;i++)
+    {
+        s+=bar(c[i]);
+    }
+    return s;
+}
+****************
+    Compiled with the following :
+****************
+s390x-linux-gnu-gcc-6 -O3 -fno-asynchronous-unwind-tables -m31 -c e2t_s1.c -o e2t_s1.o
+****************
+    The following can be done :
+****************
+/e2t e2t_s1.o
+P7K5X00M CSECT * e2t_s1.o
+        DC  AL4($$$$SMAP)
+W$GCRK7V DS    0D * PROGBITS Section .text
+ DC X'909FF024A7FAFFA012A3C0C0'
+         DC    AL4(((($$$$$GOT)+2)-*)/2)
+ DC X'A7C400191892A7B80000A728000043209000C0E5'
+         DC    AL4((((LKM0BC7J)+2)-*)/2)
+ DC X'A79A00011AB2A7A6FFF6A72800FF142B5840F098989FF08407F4A7280000A7F4'
+ DC X'FFF9070707070707'
+$$$$$GOT DS    0D
+IP6L2GAL DC    A(BAR)
+$$$$$PLT DS    0D
+* PLT Entry for bar@PLT
+LKM0BC7J DC    X'C010',AL4(((IP6L2GAL+2)-*)/2),X'5811000007F1'
+$$$$SMAP DC  C'$$$$SMAP'
+         DC  AL4(P7K5X00M)
+         DC  AL1(8)
+         DC  C'e2t_s1.o'
+         DS    0D
+         ENTRY FOO * foo
+FOO      EQU   W$GCRK7V+0
+         EXTRN BAR * bar
+$$NM0000 DC   A(-1),A(-1),A(-1)
+         DS    0D
+         DC    AL4(0)
+         END
+****************
