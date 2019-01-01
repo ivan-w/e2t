@@ -2,4 +2,36 @@
 
 Introduction
 
-    The purpose of the utility is to be able to create IBM COFF TEXT files that can be used under VM or OS (VSE ?) so as to create executables from compiled languages 
+    The purpose of the utility is to be able to create IBM COFF TEXT files that can be used under VM or OS (VSE ?) from relocatable s390x (31 bit for now) ELF files so as to create executables from compiled languages (gcc only for now) from a linux system (either compiled or cross compiled).
+
+The conversion process
+
+    This version doesn't actually produce a TEXT file, but a IFOX compatible assembly file in CARD format which can then be turned into a TEXT file on the target system.
+    The source ELF file is read, checked for compatibility and the various sections are read and transformed into ASM statements.
+    PROGBITS sections are treated as Binary Large OBjects (BLOBS) and no attempt is made to interpret the instructions.
+    Relocation and Labels are turned into the relevant ASM statements. If the Relocation is located inside a PROGBITS section, it is inserted there.
+    GOT and PLT entries are created and resolved since they cannot be processed by linker programs on IBM VM/OS/VSE systems.
+    Because IFOX is limited in its label format (8 Characters, Uppercase, No initial number) C labels are mangled using a MD5 hash when it cannot be represented.
+    Long displacements to local symbols are resolved locally. Long displacement cannot be resolved externally (see Caveats).
+    It is the responsibility of the programmer to transfer the resulting ASM file to the target system for processing.
+
+Caveats
+    Depending on the compiler version, target processor and compiler flags, it is possible that the generated ELF file contains Relocations entries which cannot be translated to IFOX assembler. The resulting output will be unususable. One notable example is the relative long displacement to an external symbol. The flags and target should ensure that externals are accessed using the GOT or PLT.
+    The utility doesn't understand the s390/s390x ABI used. It is the resposibility, on initial invocation, to set up proper entry and exit procedures to programs (stack, argument passing, return value). This only concerns initial invocation (for example calling "main" from CMS)
+    Because C Labels are mangled using hashes, there is a possibility that more than one C label generates the same mangled IFOX label. The program generates 2^38 possible labels. As a result there is a 2% chance of a collision if there are about 100,000 symbols in the program and 50% chance with 600,000 symbols. Collisions are only a concern for local symbols within a single file and for external symbols if link editing multiple files on the target system.
+    Because C labels are mangled using hashes, it may make it complicated to debug what C label is related to any IFOX label. However, the C to Mangled label is indicated in the IFOX output as a comment.
+    COMMON sections can be translated to COM sections. However, contrary to ELF, the CMS (OS ? VSE ?) linker doesn't consider them as globally visible
+    IFOX has a hard limit on the number of ESDs. So large pre-linked programs may not assemble.
+    if the relocatable ELF file contains no symbol, the output cannot be used by IFOX
+    There is no C Library (but one can create one with the utility).
+
+Usage
+    e2t [-vXCMN] filename
+        -v Show version information
+        -X Expose hidden symbols
+            When converting libraries to a set of IFOX/TEXT files, some libraries contain hidden symbols but that are useful for linking (for example gcclib). This flags ignores the "hidden" indicater in the ELF files and creates an ENTRY nonetheless
+        -C Treat common as DS
+            As explained in the caveats section, Common Section can be seen as COM IFOX statements. However, these are not seen as external. Specifying this flag generates a DS and an ENTRY statement instead of a COM statement
+        -M Generate an inlined symbol map (experimental)
+        -N Do not generate ENTRY statements. This is needed for pre-linked relocatable objects which are large enough to exceed the hard limit of IFOX regarding the number of ESD entries. It is then required to add the necessary ENTRY cards so that linking can be performed. (FOR Example adding an " ENTRY MAIN" line in the output deck)
+
