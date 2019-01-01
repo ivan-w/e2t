@@ -1,0 +1,5 @@
+    E2T - A Elf to IBM TEXT utility
+
+Introduction
+
+    The purpose of the utility is to be able to create IBM COFF TEXT files that can be used under VM or OS (VSE ?) so as to create executables from compiled languages 
