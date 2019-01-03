@@ -13,13 +13,14 @@ static	inline	void	e2t_usage(char *progname)
     fprintf(stderr,"\t-M : Generate a symbol map\n");
     fprintf(stderr,"\t-C : Treat COM as DS\n");
     fprintf(stderr,"\t-N : Do not generate ENTRY records\n");
+    fprintf(stderr,"\t-P : use PLT calls even for local calls\n");
 	return;
 }
 
 static	inline	int	e2t_options(e2t *e,int ac,char **av)
 {
 	int	oc;
-	while((oc=getopt(ac,av,"?vXCMN"))!=-1)
+	while((oc=getopt(ac,av,"?vXCMNP"))!=-1)
 	{
 		switch(oc)
 		{
@@ -39,6 +40,9 @@ static	inline	int	e2t_options(e2t *e,int ac,char **av)
 			case 'N':
 				e->noentry=1;
 				break;
+            case 'P':
+                e->lplt=1;
+                break;
 			case '?':
 				return 1;
 		}

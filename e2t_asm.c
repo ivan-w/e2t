@@ -358,11 +358,25 @@ void	e2t_asm_process_rela_final(e2t *e,int count,Elf_Data *ed,int shndx)
 		isrel=1;
 		isdbl=1;
 		is64=0;
+        int gots;
 		switch(rt)
 		{
 			case R_390_PLT32DBL:
 				// printf("PLT32DBL\n");
-				symn=e2t_elf_symbol_name_suffixed(e,rs,"@PLT");
+                /* TODO : Set a flag so that local calls do not go through a PLT */
+                gots=0;
+                if(!e->lplt)
+                {
+                    if(sym.st_shndx!=SHN_UNDEF)
+                    {
+				        symn=e2t_elf_symbol_name(e,rs);
+                        gots=1;
+                    }
+                }
+                if(!gots)
+                {
+				    symn=e2t_elf_symbol_name_suffixed(e,rs,"@PLT");
+                }
 				e2t_asm_normalize_symbol(symn,nsymn,0);
 				break;
 			case R_390_GOTENT:
@@ -404,11 +418,6 @@ void	e2t_asm_process_rela_final(e2t *e,int count,Elf_Data *ed,int shndx)
 				fprintf(stderr,"What is Relocation type %d ?\n",rt);
 				break;
 		}
-		/* Position to the right place */
-/*
-		printf("         ORG   %s+%d\n",nsecn,grela.r_offset);
-*/
-
 		char	*asmbfr;
 		e2t_rela_in_section	*sr;
 

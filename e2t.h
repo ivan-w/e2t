@@ -26,10 +26,12 @@ typedef struct __e2t
 	e2t_list	got;	/* Symbols defined in GOT */
 	e2t_list	plt;	/* Symbols defined in PLT */
 	e2t_list	sect_relas;	/* rela in section list */
-	int		exposehidden : 1,
-			comasds : 1,
-			noentry : 1,
-			genmap : 1;
+	int		exposehidden : 1,   /* Generate ENTRY for symbols that have the HIDDEN flag in ELF (-X) */
+			comasds : 1,    /* Generate DS instead of COM for ELF Common symbols (-D) */
+			noentry : 1,    /* Do not generate ENTRY statements - to overcome ESD limit in IFOX (-N) */
+			genmap : 1,     /* Generate a symbol map (-M) */
+			lplt : 1;       /* Always do a PLT call even for local calls instead of a direct call (-P) */
+                            /* PLT Calls are still generated for foreign (external) calls if the flag is not set */
 } e2t;
 
 typedef struct __e2t_rela_in_section
