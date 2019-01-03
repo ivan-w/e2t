@@ -13,7 +13,7 @@ static	inline	void	e2t_usage(char *progname)
     fprintf(stderr,"\t-M : Generate a symbol map\n");
     fprintf(stderr,"\t-C : Treat COM as DS\n");
     fprintf(stderr,"\t-N : Do not generate ENTRY records\n");
-    fprintf(stderr,"\t-P : use PLT calls even for local calls\n");
+    fprintf(stderr,"\t-P : Use PLT calls even for local calls\n");
 	return;
 }
 

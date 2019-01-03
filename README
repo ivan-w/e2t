@@ -30,11 +30,12 @@ Usage
     e2t [-vXCMN] filename
         -v Show version information
         -X Expose hidden symbols
-            When converting libraries to a set of IFOX/TEXT files, some libraries contain hidden symbols but that are useful for linking (for example gcclib). This flags ignores the "hidden" indicater in the ELF files and creates an ENTRY nonetheless
+            When converting libraries to a set of IFOX/TEXT files, some libraries contain hidden symbols but that are useful for linking (for example gcclib). This flags ignores the "hidden" indicator in the ELF files and creates an ENTRY nonetheless
         -C Treat common as DS
             As explained in the caveats section, Common Section can be seen as COM IFOX statements. However, these are not seen as external. Specifying this flag generates a DS and an ENTRY statement instead of a COM statement which may lead to duplicate entries in turn.
         -M Generate an inlined symbol map (experimental)
         -N Do not generate ENTRY statements. This is needed for pre-linked relocatable objects which are large enough to exceed the hard limit of IFOX regarding the number of ESD entries. It is then required to add the necessary ENTRY cards so that linking can be performed. (FOR Example adding an " ENTRY MAIN" line in the output deck)
+        -P Generate PLT Calls for local calls. If this flag is not set, calls to local routines do not go through the Procedure Linkage Table (Indirect calls). Calls to external routines still go through the PLT if the flag is not set.
 
 Example
     Consider the following source C file :
