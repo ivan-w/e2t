@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-// static	char	foo[256];
+static __thread volatile int	foo=1;
 // char	bar[256];
 #define PRIME_TYPE	uint32_t
 #define _STATIC static
@@ -71,7 +71,8 @@ int	main(int ac,char **av)
 	char	*eptr;
 	PRIME_TYPE	x,y;
 	PRIME_TYPE	*a;
-	// memset(foo,0,sizeof(foo));
+    // memset(foo,0,sizeof(foo));
+    printf("%d\n",foo);
 	// memset(bar,0,sizeof(bar));
 	if(ac<2) return 1;
 	x=strtol(av[1],&eptr,10);
