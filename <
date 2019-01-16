@@ -415,10 +415,6 @@ void	e2t_asm_process_rela_final(e2t *e,int count,Elf_Data *ed,int shndx)
 				e2t_asm_normalize_symbol(symn,nsymn,0);
 				break;
             case R_390_TLS_LE32:
-				symn=e2t_elf_symbol_name(e,rs);
-				e2t_asm_normalize_symbol(symn,nsymn,0);
-                fprintf(stderr,"TLS_LE32 : %s - Ms\n",symn,nsymn);
-                break;
 			default:
 				fprintf(stderr,"What is Relocation type %d ?\n",rt);
 				break;
