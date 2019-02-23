@@ -4,7 +4,8 @@ ARCHS= \
 	z10 \
 	z13
 
-C390FLAGS=-O3 -m31 -fPIC -fPIE -fno-asynchronous-unwind-tables -fomit-frame-pointer
+C390FLAGS=-O3 -m31 -fno-asynchronous-unwind-tables -fomit-frame-pointer
+# C390FLAGS=-O3 -m31 -fPIC -fPIE -fno-asynchronous-unwind-tables -fomit-frame-pointer
 # C390FLAGS=-O3 -m31
 CFLAGS=-O3
 
